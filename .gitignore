@@ -1,0 +1,16 @@
+# Specific files
+config.py
+
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+
+
+# Distribution/packaging
+.Python
+
+
+# Miscellaneous files
+LICENSE
+README.md
