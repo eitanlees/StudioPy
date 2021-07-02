@@ -34,6 +34,10 @@ mpl.use("TkAgg")
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
+from sympy import var as symvar
+from sympy import sympify
+from sympy.utilities.lambdify import lambdify
+
 from IPython import embed
 
 class SubModuleClose(Exception):
@@ -46,7 +50,12 @@ class SubModuleWindow:
   __EXIT_LIST = [None, sg.WIN_CLOSED, "\x1b"]
   __figure_agg = None
 
+  __choices = ['zeros','constant','linear2zero','linear2periodic']
+  __textchs = ['Zeros', "Constant", "Linear to Zero", "Linear Periodic"]
+  __textdct = dict(zip(__textchs,__choices))
+
   wincfg = {}
+  __x = symvar('x')
 
   def __init__(self,configfile=None, launch_window=False):
 
@@ -60,9 +69,12 @@ class SubModuleWindow:
     # Set up the course window BACK and EXIT buttons
     sg.theme('Dark')
 
-    # [sg.Text("FFTs - Padding Sequences")],
-    buttons = [[sg.Button("Submit", key='-SUBMIT-')],
-              [sg.Button("Exit", key='-EXIT-')],]
+    buttons = [
+      [ sg.Button("Submit", key='-SUBMIT-'), sg.Button("Generate Random Data", key="-RAND-"), sg.Button("Exit", key='-EXIT-')                ],
+      [ sg.Text("Function f(x)",    size=(15,1)), sg.InputText("x * cos(x**2)", key="-INPUT-FUNC-")                                          ],
+      [ sg.Text("Number of points", size=(15,1)), sg.InputText("33", key="-INPUT-NUM-")                                                      ],
+      [ sg.Text("Padding Method",   size=(15,1)), sg.Combo(self.__textchs, size=(20,20), key="-INPUT-PAD-", default_value=self.__textchs[0]) ],
+      ]
 
     canvas = [[sg.Canvas(key="-CANVAS-")]]
 
@@ -78,7 +90,6 @@ class SubModuleWindow:
 
       self.wincfg['finalize'] = True
       self.window = sg.Window(self.title, self.layout, **self.wincfg)
-
       if begin_read:
         self.read_window()
 
@@ -86,9 +97,7 @@ class SubModuleWindow:
 
       while True:
           event, values = self.window.read()
-
           self.check_read(event,values)
-
       self.window.close()
 
 
@@ -98,16 +107,22 @@ class SubModuleWindow:
       self.window.close()
       return True
 
-    elif event == "-SUBMIT-":
-        
+    elif event == '-SUBMIT-':
+      inpf = values['-INPUT-FUNC-']
+      inpt = self.__textdct[values['-INPUT-PAD-']]
+      inpn = int(values['-INPUT-NUM-'])
+      expr = sympify(inpf)
+      func = lambdify(self.__x,expr,"numpy")
+      figr = self._plot_fft(func,n=inpn,padding=inpt)
       if self.__figure_agg: # ** IMPORTANT ** Clean up previous drawing before drawing again
-        self.__figure_agg.get_tk_widget().forget()
-        plt.close('all')
+          self.__figure_agg.get_tk_widget().forget()
+          plt.close('all')
 
-      f = lambda x: np.cos(2*np.pi*x)
-      new_figure = self._plot_fft(f,n=33,padding='linear2periodic')
-      self.__figure_agg = self._draw_figure(self.window["-CANVAS-"].TKCanvas, new_figure)
+      self.__figure_agg = self._draw_figure(self.window["-CANVAS-"].TKCanvas, figr)
 
+    elif event == '-RAND-':
+      pass
+  
     return False
 
   def _draw_figure(self, canvas, figure):
@@ -189,7 +204,6 @@ class SubModuleWindow:
 
 
 if __name__ == '__main__':
-
 
   window = SubModuleWindow()
   window.launch_window()

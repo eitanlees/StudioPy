@@ -88,7 +88,6 @@ class CourseWindow:
         elif event in self.layout.submodules.keys():
             imp_module = importlib.import_module(self.layout.submodules[event])
             submodule  = imp_module.SubModuleWindow(launch_window=True)
-            # submodule.launch_window()
             self.submods[submodule.window] = submodule
 
 

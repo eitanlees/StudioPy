@@ -68,11 +68,6 @@ class CourseLayout:
 
     self.modkeys = list(self.modules.keys())
 
-
-    # self.colkeys = [mod.colkey for mod in self.modules.values()]
-    # self.modkeys = [mod.module for mod in self.modules.keys()]
-    # self.coldict = dict(zip(self.modkeys,self.colkeys))
-
   def print_configuration(self):
 
     print(f"\nCourse name: {self.course}\n")

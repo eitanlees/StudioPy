@@ -87,4 +87,3 @@ if __name__ == '__main__':
   cm.print_configuration()
 
   mod = cm.submodule_check_read(list(cm.submodules.keys())[1], ())
-  embed()

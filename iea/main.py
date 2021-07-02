@@ -12,7 +12,6 @@ from IPython import embed
 def main():
 
   course = CourseWindow(configfile='config/course.yml',launch_window=True)
-  course.print_configuration()
 
   while True:
 
