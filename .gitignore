@@ -1,6 +1,11 @@
 # Specific files
 config.py
+setup.py
 
+# Working directories
+**/dev
+**/old
+**/__pychache__
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

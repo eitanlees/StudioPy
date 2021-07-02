@@ -1,0 +1,5 @@
+course: "Applied Computational Science II"
+
+module_configs:
+  - "config/intro.yml"
+  - "config/fft.yml"
