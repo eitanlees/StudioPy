@@ -1,3 +1,19 @@
+'''
+Author: Ezra S. Brooker
+Date Created: 2021 July 02
+Date Modified: 
+
+Applied Computational Science II
+Interactive Examples Applet
+Dept of Scientific Computing
+Florida State University
+
+Proof-of-Concept for basic FFT examples using
+the PySimpleGUI package for generating the GUI
+
+Recursive FFT/DFT
+
+'''
 import sys
 if sys.version_info[0] < 3:
   raise Exception("Python 2 is no longer supported, please use Python 3!")

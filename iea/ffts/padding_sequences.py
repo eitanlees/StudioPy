@@ -23,7 +23,6 @@ if sys.version_info[0] < 3:
 import os
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
-from collections import OrderedDict
 import tempfile
 import numpy as np
 
@@ -39,9 +38,6 @@ from sympy import sympify
 from sympy.utilities.lambdify import lambdify
 
 from IPython import embed
-
-class SubModuleClose(Exception):
-  print("[FFTs: Padding Sequences] Window closing")  
 
 class SubModuleWindow:
 
