@@ -11,7 +11,7 @@ from IPython import embed
 
 def main():
 
-  course = CourseWindow(configfile='config/course.yml',launch_window=True)
+  course = CourseWindow(configfile='config/acs2.yml',launch_window=True)
 
   while True:
 

@@ -41,7 +41,7 @@ class CourseWindow:
             raise Exception(f"[ConfigFileRead Error] Can't read this file extension: {self.configfile}")
 
         self.wincfg = self.config['window config']
-        self.layout = CourseLayout(self.config['course config'])
+        self.layout = CourseLayout(self.configfile)
 
     def launch_window(self, begin_read=False):
 
