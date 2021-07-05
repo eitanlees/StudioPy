@@ -4,10 +4,7 @@ if sys.version_info[0] < 3:
 import os
 import PySimpleGUI as sg
 
-from course_window import CourseWindow
-
-from IPython import embed
-
+from course.course_window import CourseWindow
 
 def main():
 

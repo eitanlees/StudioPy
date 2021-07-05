@@ -2,7 +2,9 @@ course: "Applied Computational Science II"
 
 module_configs:
   - "config/intro.yml"
+  - "config/pdes.yml"
   - "config/fft.yml"
+
 
 window config:
   location: 

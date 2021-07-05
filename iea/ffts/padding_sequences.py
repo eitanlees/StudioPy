@@ -23,7 +23,6 @@ if sys.version_info[0] < 3:
 import os
 import warnings
 warnings.simplefilter(action="ignore", category=FutureWarning)
-import tempfile
 import numpy as np
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -36,8 +35,6 @@ import matplotlib.ticker as ticker
 from sympy import var as symvar
 from sympy import sympify
 from sympy.utilities.lambdify import lambdify
-
-from IPython import embed
 
 class SubModuleWindow:
 
@@ -126,7 +123,7 @@ class SubModuleWindow:
 
     elif event == "-RAND-":
       self.__f = lambda x: np.random.random(x.size)
-      self._data()
+      self._data(user_func=False)
       self._pad()
 
     self._draw()
@@ -144,12 +141,13 @@ class SubModuleWindow:
     self.__figure_agg =  figure_canvas_agg
 
 
-  def _data(self):
-    try:
-      expr      = sympify(self.__funcstr)
-      self.__f  = lambdify(self.__x,expr,"numpy")
-    except:
-      sg.Popup("[Error] Invalid function given!")
+  def _data(self, user_func=True):
+    if user_func:
+      try:
+        expr      = sympify(self.__funcstr)
+        self.__f  = lambdify(self.__x,expr,"numpy")
+      except:
+        sg.Popup("[Error] Invalid function given!")
     self.__xf = np.linspace(0,1,64)    # Spatial domain for data
     self.__yf = self.__f(self.__xf)    # Create full dataset
 
