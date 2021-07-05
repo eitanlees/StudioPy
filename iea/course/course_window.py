@@ -2,6 +2,9 @@
 Ezra S. Brooker
 Date Created: 2021
 
+Department of Scientific Computing
+Florida State University
+
 Course Window class that defines the GUI interface for a generic course.
 Takes in a config file that gives window configuration details and the
 module config filename and paths to know what modules to load for the 

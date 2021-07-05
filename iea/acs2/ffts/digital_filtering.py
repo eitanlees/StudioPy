@@ -3,8 +3,6 @@ Author: Ezra S. Brooker
 Date Created: 2021 July 02
 Date Modified: 
 
-Applied Computational Science II
-Interactive Examples Applet
 Dept of Scientific Computing
 Florida State University
 

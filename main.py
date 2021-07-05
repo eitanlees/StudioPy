@@ -2,6 +2,9 @@
 Ezra S. Brooker
 Date Created: 2021
 
+Department of Scientific Computing
+Florida State University
+
 Main driver of the Interactive Educational Applet that is built
 in Python based off of Michael Heath's Scientific Computing java
 modules.

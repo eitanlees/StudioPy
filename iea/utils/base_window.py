@@ -2,6 +2,9 @@
 Ezra S. Brooker
 Date Created: 2021-07-05
 
+Department of Scientific Computing
+Florida State University
+
 Base window class that will be used in all successive window classes.
 
 It will mostly be used to mitigate the need for excessively rewriting

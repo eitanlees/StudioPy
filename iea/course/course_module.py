@@ -1,3 +1,13 @@
+"""
+Ezra S. Brooker
+Date Created: 2021
+
+Department of Scientific Computing
+Florida State University
+
+Course Module class use to load in the course module configurations.
+
+"""
 import sys
 if sys.version_info[0] < 3:
   raise Exception("Python 2 is no longer supported, please use Python 3!")

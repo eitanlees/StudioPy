@@ -2,6 +2,11 @@
 Ezra S. Brooker
 Date Created: 2021-07-05
 
+Department of Scientific Computing
+Florida State University
+
+Heat Equation Demonstration
+
 
 """
 
@@ -26,10 +31,7 @@ class SubModuleWindow(BaseWindow):
 
 
   def launch(self):
-      self._generate_signal()
-      self._smooth_signal()
       super().launch()
-      self._draw()
 
 
   def event_loop(self):
