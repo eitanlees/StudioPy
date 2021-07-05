@@ -1,8 +1,0 @@
-module: "Partial Differential Equations"
-
-location: "pdes/"
-
-submodules:
-  Heat Equation: "heat_eqn.py"
-
-text: "The following modules illustrate various PDEs."

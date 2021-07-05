@@ -1,8 +1,0 @@
-Scientific Programming: "config/sciprog.yml"
-Applied Computational Science I: "config/acs1.yml"
-Applied Computational Science II: "config/acs2.yml"
-Survey of Numerical PDEs: "numpdes.yml"
-Boundary Integral Equations: "boundintg.yml"
-Monte Carlo Markhov Chains: "mcmc.yml"
-High Performance Computing: "hpc.yml"
-Scientific Visualization: "sciviz.yml"
