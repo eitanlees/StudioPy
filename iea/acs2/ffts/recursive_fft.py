@@ -17,6 +17,7 @@ if sys.version_info[0] < 3:
   raise Exception("Python 2 is no longer supported, please use Python 3!")
 
 import os
+import tempfile
 import warnings
 warnings.simplefilter(action="ignore", category=FutureWarning)
 from collections import OrderedDict
@@ -25,7 +26,7 @@ import numpy as np
 # Might need to install
 import PySimpleGUI as sg
 from graphviz import Digraph, Source
-# import pydot
+import pydot
 
 from iea.utils.base_window import BaseWindow
 
@@ -147,7 +148,7 @@ class FFT_graphable_num:
 class SubModuleWindow(BaseWindow):
 
   title = "FFTs: Recursive DFT"
-  _fout = "temp_recurse_fft_graph"
+  _fout = tempfile.TemporaryFile(delete=False)
   wincfg = {}
   _counter = 0
   _imgs = []
@@ -156,6 +157,11 @@ class SubModuleWindow(BaseWindow):
   def __init__(self, configfile=None, launch=False):
     super().__init__(configfile, launch)
 
+
+  def __del__(self):
+    self._fout.close()
+    print(f"Removing Tempfile {self._fout.name}")
+    os.remove(self._fout.name)
 
   def _configure_layout(self):
     sg.theme("Dark") # window theme
@@ -177,10 +183,11 @@ class SubModuleWindow(BaseWindow):
     ]
 
     # create a column in the window for displaying the Canvas plot
+    self._default_graph(update_window=False) # Make a first call to generate at window startup
+    self._imgs[self._counter].write(self._fout.name,format="png")
     col_image = [ 
-      [sg.Image(filename=self._fout, key="-IMAGE-", enable_events=True)],
+      [sg.Image(filename=self._fout.name, key="-IMAGE-", enable_events=True)],
     ]
-
 
     # assign columns to layout list in order they should appear
     self.layout = [
@@ -197,7 +204,6 @@ class SubModuleWindow(BaseWindow):
       self.wincfg["return_keyboard_events"] = True
       self.wincfg["resizable"] = True
       self.wincfg["location"]  = [100,100]
-      self._default_graph(update_window=False) # Make a first call to generate it window startup
       super().launch()
       self.window["-MULTI-"].update(algorithm_text(line=[0]))
       self.inp = "0+0j, 0, 0, 0+0j"
@@ -225,8 +231,8 @@ class SubModuleWindow(BaseWindow):
 
 
     elif event in ("Next", "w") and self._counter < len(self._imgs):
-      self._imgs[self._counter].write(self._fout,format="png")
-      self.window["-IMAGE-"].update(filename=self._fout)
+      self._imgs[self._counter].write(self._fout.name,format="png")
+      self.window["-IMAGE-"].update(filename=self._fout.name)
       self.window["-MULTI-"].update(self._algo[self._counter])
       self._counter+=1
 
@@ -280,11 +286,11 @@ class SubModuleWindow(BaseWindow):
             dot.edge("_" + str(num.level-1)+str(num.index), num.node, style="invis")
 
     gr = pydot.graph_from_dot_data(dot.source)[0]  # Convert to pydot Digraph
-    gr.write(self._fout,format="png")         # Write to temporary file name
 
     # Update graph window if desired    
     if update_window:
-      self.window["-IMAGE-"].update(filename=self._fout)
+      gr.write(self._fout.name,format="png")         # Write to temporary file name
+      self.window["-IMAGE-"].update(filename=self._fout.name)
     else:
       self._imgs.append(gr)
 
