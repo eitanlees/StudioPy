@@ -26,11 +26,11 @@ def main():
     window, event, values = sg.read_all_windows()
 
     if window == course.window:
-      close_all = course.check_read(event,values)
+      close_all = course.check_event(event,values)
       if close_all:
         break
     else:
-      window_closed = course.subwindows[window].check_read(event,values)
+      window_closed = course.subwindows[window].check_event(event,values)
       if window_closed:
         course.subwindows.pop(window)
 

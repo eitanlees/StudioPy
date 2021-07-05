@@ -105,11 +105,11 @@ class SubModuleWindow(BaseWindow):
   def event_loop(self):
       while True:
           event, values = self.window.read()
-          close_now = self.check_read(event,values)
+          close_now = self.check_event(event,values)
           if close_now:
             break
 
-  def check_read(self,event,values):
+  def check_event(self,event,values):
 
     self._nsamp = int(values["-SAMP-"])
     self._ntrnc = int(values["-TRUNC-"])

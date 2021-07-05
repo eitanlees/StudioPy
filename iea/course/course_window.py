@@ -79,7 +79,7 @@ class CourseWindow(BaseWindow):
         self.__current_page = self.modkeys[0]
 
 
-    def check_read(self,event,values):
+    def check_event(self,event,values):
 
         if event in self._EXIT_LIST + ['-EXIT-']:
             [w.window.close() for w in self.subwindows.values()]
@@ -94,11 +94,11 @@ class CourseWindow(BaseWindow):
 
         elif event in self.submodules.keys():
             imp_module = importlib.import_module(self.submodules[event])
-            # try:
-            submodule  = imp_module.SubModuleWindow(launch=True)
-            self.subwindows[submodule.window] = submodule
-            # except:
-                # sg.Popup(f"[Course Error] Submodule \"{self.submodules[event]}\" is missing!")
+            try:
+                submodule  = imp_module.SubModuleWindow(launch=True)
+                self.subwindows[submodule.window] = submodule
+            except:
+                sg.Popup(f"[Course Error] Submodule \"{self.submodules[event]}\" is missing!")
 
         return False
 

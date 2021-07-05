@@ -212,7 +212,7 @@ class SubModuleWindow(BaseWindow):
       self._algo = []
 
 
-  def check_read(self,event,values):
+  def check_event(self,event,values):
 
     if event in (None, "Exit", sg.WIN_CLOSED, "\x1b"):
       self.window.close()

@@ -2,11 +2,10 @@
 Ezra S. Brooker
 Date Created: 2021-07-05
 
-Department of Scientific Computing
-Florida State University
+    Department of Scientific Computing
+    Florida State University
 
 Heat Equation Demonstration
-
 
 """
 
@@ -37,9 +36,13 @@ class SubModuleWindow(BaseWindow):
   def event_loop(self):
       while True:
           event, values = self.window.read()
-          close_now = self.check_read(event,values)
+          close_now = self.check_event(event,values)
           if close_now:
             break
+
+
+  def check_event(self, event, values):
+      super().check_event(event, values)
 
 
 if __name__ == "__main__":

@@ -84,11 +84,11 @@ class SubModuleWindow(BaseWindow):
   def event_loop(self):
       while True:
           event, values = self.window.read()
-          closed = self.check_read(event,values)
+          closed = self.check_event(event,values)
           if closed:
             break
 
-  def check_read(self,event,values):
+  def check_event(self,event,values):
 
     self._funcstr = values["-INPUT-FUNC-"]
     self._padding = self._textdct[values["-INPUT-PAD-"]]
