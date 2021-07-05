@@ -8,10 +8,10 @@ class CourseModule:
 
   def __init__(self, configfile):
     self.configfile = configfile
-    self.configure()
+    self.configure_module()
 
 
-  def configure(self, configfile=None):
+  def configure_module(self, configfile=None):
 
     if configfile is not None:
       self.configfile        = configfile
@@ -36,10 +36,10 @@ class CourseModule:
     if self.config['location'] is not None:
       self.location = self.config['location']
       
-    self.setup_module_button()
-    self.setup_module_text()
-    self.setup_submodule_buttons()
-    self.setup_module_column()
+    self.configure_module_button()
+    self.configure_module_text()
+    self.configure_submodule_buttons()
+    self.configure_module_column()
 
 
   def print_configuration(self):
@@ -48,21 +48,21 @@ class CourseModule:
     print(f"Submodules:  {self.submodules}\n")
 
 
-  def setup_module_button(self):
+  def configure_module_button(self):
     self.module = self.config['module']
     if self.module is None:
       self.module = 'Generic Button'
     self.module_button = sg.Button(self.module, size=(30,1), key=self.module)
 
 
-  def setup_module_text(self):
+  def configure_module_text(self):
     self.text = self.config['text']
     if self.text is None:
       self.text = "Some generic placeholder text"
     self.module_text = [[sg.Text(self.text)]]
 
 
-  def setup_submodule_buttons(self):
+  def configure_submodule_buttons(self):
     self.submodules = self.config['submodules']
 
     if self.submodules is not None:
@@ -71,7 +71,7 @@ class CourseModule:
       self.submodule_buttons = []
 
 
-  def setup_module_column(self):
+  def configure_module_column(self):
     self.colkey = f"{self.module} Column"
     self.module_column = sg.Column(self.module_text + self.submodule_buttons, visible=False, key=self.colkey)
 

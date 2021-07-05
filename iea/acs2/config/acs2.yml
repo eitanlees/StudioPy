@@ -1,0 +1,19 @@
+title: "Applied Computational Science II"
+
+location: "iea/acs2"
+
+module_configs:
+  - "config/intro.yml"
+  - "config/pdes.yml"
+  - "config/fft.yml"
+
+
+window config:
+  location: 
+    - 0
+    - 0
+  size:
+    - 650
+    - 500
+  finalize: True
+  resizable: True

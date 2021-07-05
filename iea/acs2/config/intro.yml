@@ -1,0 +1,23 @@
+module: "Introduction"
+
+location:
+
+submodules:
+
+text: "Interactive Educational Modules in Scientific Computing\n\
+for Applied Computational Science II at Florida State\n\
+University, Department of Scientific Computing\n\n\
+The modules listed to the left are fully interactive\n\
+and designed to assist in learning concepts and\n\
+algorithms found in scientific computing.\n\n\
+Choose any category to begin. The HOME button will\n\
+take you back to this page and obviously the EXIT\n\
+button will close the program.\n\n\
+Developers: Ezra Brooker\n\n\
+This interactive booklet was inspired by the JAVA\n\
+modules designed to go hand-in-hand with the book,\n\
+\"Scientific Computing, An Introductory Survey\", 2nd\n\
+edition, by Michael T. Heath, published by McGraw-Hill,\n\
+New York, 2002.\n\n\
+This applet is fully written in Python 3, using the\n\
+PySimpleGUI package to power the UI."
