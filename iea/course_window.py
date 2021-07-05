@@ -87,9 +87,11 @@ class CourseWindow:
 
         elif event in self.layout.submodules.keys():
             imp_module = importlib.import_module(self.layout.submodules[event])
-            submodule  = imp_module.SubModuleWindow(launch_window=True)
-            self.submods[submodule.window] = submodule
-
+            try:
+                submodule  = imp_module.SubModuleWindow(launch_window=True)
+                self.submods[submodule.window] = submodule
+            except:
+                sg.Popup(f"[Course Error] Submodule \"{self.layout.submodules[event]}\" is missing!")
 
         return False
 

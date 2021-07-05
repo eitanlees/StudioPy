@@ -1,4 +1,4 @@
-'''
+"""
 Author: Ezra S. Brooker
 Date Created: 2021 July 02
 Date Modified: 
@@ -13,14 +13,14 @@ the PySimpleGUI package for generating the GUI
 
 Recursive FFT/DFT
 
-'''
+"""
 import sys
 if sys.version_info[0] < 3:
   raise Exception("Python 2 is no longer supported, please use Python 3!")
 
 import os
 import warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
+warnings.simplefilter(action="ignore", category=FutureWarning)
 from collections import OrderedDict
 import tempfile
 import numpy as np
@@ -35,8 +35,8 @@ import time
 
 def algorithm_text(line=[24]):
   # Dirty way of dealing with the changing algorithm text format as we cycle through portions of it
-  # The function is called by window['-MULTI-'].update(algorithm_text()) to update the text source
-  # And window['-MULTI-'].update() is called most by self.__wait_for_update_call() that allows us to control
+  # The function is called by window["-MULTI-"].update(algorithm_text()) to update the text source
+  # And window["-MULTI-"].update() is called most by self.__wait_for_update_call() that allows us to control
   # our stepping through the recursive algorithm
   prestr = ["    " for _ in range(25)]
   for i in line:
@@ -97,7 +97,7 @@ class FFT_graphable_num:
     self.complx = number
     self.real = self.complx.real
     self.imag = self.complx.imag
-    self.string = str(round(self.real,2)) + ' + ' + str(round(self.imag,2)) + 'i'
+    self.string = str(round(self.real,2)) + " + " + str(round(self.imag,2)) + "i"
     self.level = level                                                          #this is the y index in the graphviz graph
     self.parents = parents
     FFT_graphable_num.max_level = max(level, FFT_graphable_num.max_level)
@@ -131,12 +131,12 @@ class FFT_graphable_num:
 
 
   def set_index(self, index = 0, offset = 0):
-    '''
+    """
     set horizontal index of node given other nodes in graph
-    '''
+    """
     if self.level not in FFT_graphable_num.all_by_level:
       FFT_graphable_num.all_by_level[self.level] = []
-      self.index = 0                                                            #if this level hasn't been seen yet, we're on the far left side
+      self.index = 0                                                            #if this level hasn"t been seen yet, we"re on the far left side
       return
 
     indices_on_my_level = [node.index for node in
@@ -165,27 +165,27 @@ class SubModuleWindow:
 
 
   def module_layout(self):
-    sg.theme('Dark') # window theme
+    sg.theme("Dark") # window theme
 
     # create a column in the window for the input boxes
     col_input = [
       [ sg.Text("", size=(1,1))                                                                                              ],
-      [ sg.Text("FFT not initialized...", size=(55,1),key='-PROGRESS-')                                                       ],
-      [ sg.Button('Submit', bind_return_key=True, size=(5,1)), sg.InputText('1+3j, 2, 3, 4+1j', key='-INPUT-' )              ],
-      [ sg.Button('Reset',  bind_return_key=True, size=(5,1)), sg.Text("Reset Graph: Click or press  <r>  key", size=(50,1)) ],
-      [ sg.Button('Next',   bind_return_key=True, size=(5,1)), sg.Text("Advance FFT: Click or press  <w>  key", size=(50,1)) ],
-      [ sg.Button('Exit',   bind_return_key=True, size=(5,1)), sg.Text("Exit Window: Click or press <ESC> key", size=(50,1)) ],
+      [ sg.Text("FFT not initialized...", size=(55,1),key="-PROGRESS-")                                                       ],
+      [ sg.Button("Submit", bind_return_key=True, size=(5,1)), sg.InputText("1+3j, 2, 3, 4+1j", key="-INPUT-" )              ],
+      [ sg.Button("Reset",  bind_return_key=True, size=(5,1)), sg.Text("Reset Graph: Click or press  <r>  key", size=(50,1)) ],
+      [ sg.Button("Next",   bind_return_key=True, size=(5,1)), sg.Text("Advance FFT: Click or press  <w>  key", size=(50,1)) ],
+      [ sg.Button("Exit",   bind_return_key=True, size=(5,1)), sg.Text("Exit Window: Click or press <ESC> key", size=(50,1)) ],
       [ sg.Text("", size=(1,1))                                                                                              ],
     ]
 
-    # We'll place the algorithm text in the scrollable box below the input line and buttons
+    # We"ll place the algorithm text in the scrollable box below the input line and buttons
     col_multi = [
-      [ sg.MLine(algorithm_text(), size=(70,35), key='-MULTI-') ]
+      [ sg.MLine(algorithm_text(), size=(70,35), key="-MULTI-") ]
     ]
 
     # create a column in the window for displaying the Canvas plot
     col_image = [ 
-      [sg.Image(filename=self.__fout.name, key='-IMAGE-', enable_events=True)],
+      [sg.Image(filename=self.__fout.name, key="-IMAGE-", enable_events=True)],
     ]
 
 
@@ -200,13 +200,14 @@ class SubModuleWindow:
 
   def launch_window(self, begin_read=False):
 
-      self.wincfg['finalize'] = True
-      self.wincfg['return_keyboard_events'] = True
-      self.wincfg['resizable'] = True
+      self.wincfg["finalize"]  = True
+      self.wincfg["return_keyboard_events"] = True
+      self.wincfg["resizable"] = True
+      self.wincfg["location"]  = [100,100]
       self.__default_graph(update_window=False) # Make a first call to generate it window startup
       self.window = sg.Window(self.title, self.layout, **self.wincfg)
-      self.window['-MULTI-'].update(algorithm_text(line=[0]))
-      self.inp = '0+0j, 0, 0, 0+0j'
+      self.window["-MULTI-"].update(algorithm_text(line=[0]))
+      self.inp = "0+0j, 0, 0, 0+0j"
       self.__counter = 0
       self.__imgs = []
       self.__algo = []
@@ -224,26 +225,26 @@ class SubModuleWindow:
       self.__algo = []
       # Clear any attributes from FFT graph
       FFT_graphable_num.clear()
-      self.inp = values['-INPUT-']
-      x = [complex(i.replace(' ',"")) for i in self.inp.split(',')]
+      self.inp = values["-INPUT-"]
+      x = [complex(i.replace(" ","")) for i in self.inp.split(",")]
       x = self.__fft(x)
-      self.window['-PROGRESS-'].update("FFT initialized! You may proceed...")
+      self.window["-PROGRESS-"].update("FFT initialized! You may proceed...")
 
 
     elif event in ("Next", "w") and self.__counter < len(self.__imgs):
-      self.__imgs[self.__counter].write(self.__fout.name,format='png')
-      self.window['-IMAGE-'].update(filename=self.__fout.name)
-      self.window['-MULTI-'].update(self.__algo[self.__counter])
+      self.__imgs[self.__counter].write(self.__fout.name,format="png")
+      self.window["-IMAGE-"].update(filename=self.__fout.name)
+      self.window["-MULTI-"].update(self.__algo[self.__counter])
       self.__counter+=1
 
       if 0 != self.__counter >= len(self.__imgs):
-        self.window['-PROGRESS-'].update("FFT procedure finished, RESET or SUBMIT to continue")
+        self.window["-PROGRESS-"].update("FFT procedure finished, RESET or SUBMIT to continue")
 
     elif event in ("Reset", "r"):
       # User gave reset graph command
       self.__default_graph(data=self.inp, update_window=True)
-      self.window['-MULTI-'].update(algorithm_text(line=[0]))
-      self.window['-PROGRESS-'].update("FFT not initialized...")
+      self.window["-MULTI-"].update(algorithm_text(line=[0]))
+      self.window["-PROGRESS-"].update("FFT not initialized...")
       self.__counter = 0
       self.__imgs = []
       self.__algo = []
@@ -252,13 +253,13 @@ class SubModuleWindow:
 
   # The directed graph is generated here using the FFT_graphable_num class and Graphviz
   def __update_graph(self,update_window=False): 
-    dot = Digraph(format='png')
-    dot.attr('node', shape='rectangle')
+    dot = Digraph(format="png")
+    dot.attr("node", shape="rectangle")
     for num in FFT_graphable_num.all:
-      dot.node(num.node, f'{round(num.real,2)} + {round(num.imag,2)}i')
+      dot.node(num.node, f"{round(num.real,2)} + {round(num.imag,2)}i")
     for i in range(FFT_graphable_num.max_level+1):                                #add invisible edges to side-by-side nodes to make graph look nice
       with dot.subgraph() as s:
-        s.attr(rank='same')
+        s.attr(rank="same")
         pre_node = FFT_graphable_num.all_by_level[i][0].node
         level_indices = [node.index for node in FFT_graphable_num.all_by_level[i]]
         for j in range(1, FFT_graphable_num.max_index+1):
@@ -266,8 +267,8 @@ class SubModuleWindow:
             post_node = list(filter(lambda x: x.index == j, 
                           FFT_graphable_num.all_by_level[i]))[0].node
           else:
-            s.node('_' + str(i)+str(j), f'{1.0} + {1.0}i', style='invis')         #make a ghost node if needed
-            post_node = '_' + str(i) + str(j)
+            s.node("_" + str(i)+str(j), f"{1.0} + {1.0}i", style="invis")         #make a ghost node if needed
+            post_node = "_" + str(i) + str(j)
           s.edge(pre_node, post_node, style="invis")
           pre_node = post_node
     for num in FFT_graphable_num.all:                                             
@@ -278,29 +279,29 @@ class SubModuleWindow:
           if p.index == num.index:
             has_parent_above = True
         if not has_parent_above:                                                  #create an invisible, vertical edge to make the graph look nice
-          potential_parent = [x for x in                                          #check if there's a real parent above the node
+          potential_parent = [x for x in                                          #check if there"s a real parent above the node
               FFT_graphable_num.all_by_level[num.level-1] if x.index == num.index]
           if potential_parent:
             dot.edge(potential_parent[0].node, num.node, style="invis")
           else:                                                                   #if not, align with the "ghost" node (created above)
-            dot.edge('_' + str(num.level-1)+str(num.index), num.node, style="invis")
+            dot.edge("_" + str(num.level-1)+str(num.index), num.node, style="invis")
 
     gr = pydot.graph_from_dot_data(dot.source)[0]  # Convert to pydot Digraph
-    gr.write(self.__fout.name,format='png')               # Write to temporary file name
+    gr.write(self.__fout.name,format="png")               # Write to temporary file name
 
     # Update graph window if desired    
     if update_window:
-      self.window['-IMAGE-'].update(filename=self.__fout.name)
+      self.window["-IMAGE-"].update(filename=self.__fout.name)
     else:
       self.__imgs.append(gr)
 
     
 
-  # Actual recursive FFT function we use (it's a little different than Heath's)
+  # Actual recursive FFT function we use (it"s a little different than Heath"s)
   def __fft(self,x, parents=None):
 
     N = len(x)
-    assert np.log2(N) % 1 == 0   #our code assumes we have an array length that's a power of 2
+    assert np.log2(N) % 1 == 0   #our code assumes we have an array length that"s a power of 2
     new_x = x.copy()
 
     # Generate the object and attributes for the directed graph
@@ -314,7 +315,7 @@ class SubModuleWindow:
     
     if parents == None:
       # Update graph window immediately, if first (Base level==0) call
-      self.window['-MULTI-'].update(algorithm_text(line=[0]))
+      self.window["-MULTI-"].update(algorithm_text(line=[0]))
       self.__update_graph(True)
     elif parents!=None and N > 1:
       # If child FFT call, then wait for user update command
@@ -371,11 +372,11 @@ class SubModuleWindow:
     return x
 
 
-  def __default_graph(self,data='0+0j, 0, 0, 0+0j', update_window=False):
+  def __default_graph(self,data="0+0j, 0, 0, 0+0j", update_window=False):
     # Default graph with all zeros
-    if update_window: self.window['-MULTI-'].update(algorithm_text())
+    if update_window: self.window["-MULTI-"].update(algorithm_text())
     FFT_graphable_num.clear()
-    x0 = [complex(i.replace(' ',"")) for i in data.split(',')]
+    x0 = [complex(i.replace(" ","")) for i in data.split(",")]
     for i in range(len(x0)):
       x0[i] = FFT_graphable_num(x0[i], level = 0)
     self.__update_graph(update_window=update_window)
@@ -384,12 +385,12 @@ class SubModuleWindow:
   def __wait_for_update_call(self,position=[24], regraph=True):
 
       self.__algo.append(algorithm_text(line=position))
-      # self.window['-MULTI-'].update(algorithm_text(line=position))
+      # self.window["-MULTI-"].update(algorithm_text(line=position))
       if regraph:
         self.__update_graph()
       return
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
   pass
