@@ -18,6 +18,7 @@ import sys
 if sys.version_info[0] < 3:
   raise Exception("Python 2 is no longer supported, please use Python 3!")
 
+import tempfile, os
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib as mpl
 mpl.use("TkAgg")
@@ -31,6 +32,7 @@ from sympy import sympify
 from sympy.utilities.lambdify import lambdify
 
 from iea.utils.base_window import BaseWindow
+
 
 class SubModuleWindow(BaseWindow):
 
@@ -51,7 +53,7 @@ class SubModuleWindow(BaseWindow):
 
 
   def __init__(self, configfile=None, launch=False):
-    super().__init__(configfile, launch)
+    super().__init__(configfile, launch, makeTempFile=True)
 
 
   def _configure_layout(self):
@@ -86,7 +88,7 @@ class SubModuleWindow(BaseWindow):
       [ sg.Button("Exit", **exi_d), sg.Button("Submit", **sub_d),               ],
       ]
 
-    canvas = [[sg.Canvas(key="-CANVAS-")]]
+    canvas = [[sg.Image(key="-IMAGE-")]]
 
     self.layout = [
         [
@@ -157,13 +159,14 @@ class SubModuleWindow(BaseWindow):
 
   def _draw(self):
     figure = self._make_plot()
-    if self._figure_agg: # ** IMPORTANT ** Clean up previous drawing before drawing again
-        self._figure_agg.get_tk_widget().forget()
-        plt.close("all")
-    figure_canvas_agg = FigureCanvasTkAgg(figure, self.window["-CANVAS-"].TKCanvas)
-    figure_canvas_agg.draw()
-    figure_canvas_agg.get_tk_widget().pack(side="top", fill="both", expand=1)
-    self._figure_agg =  figure_canvas_agg
+    self.window["-IMAGE-"].update(filename=self._fout.name)
+    # if self._figure_agg: # ** IMPORTANT ** Clean up previous drawing before drawing again
+    #     self._figure_agg.get_tk_widget().forget()
+    #     plt.close("all")
+    # figure_canvas_agg = FigureCanvasTkAgg(figure, self.window["-CANVAS-"].TKCanvas)
+    # figure_canvas_agg.draw()
+    # figure_canvas_agg.get_tk_widget().pack(side="top", fill="both", expand=1)
+    # self._figure_agg =  figure_canvas_agg
 
   def _generate_signal(self):
     try:
@@ -188,7 +191,7 @@ class SubModuleWindow(BaseWindow):
     sigavg = 10*np.log10(signal)
     noises = np.sqrt(10**((sigavg - self._snr*0.1)*0.1))
     highs  = int(0.85*self._ft.size)
-    self._ft[highs:] += np.random.normal(0.e0, noises, self._ft.size-highs)
+    self._ft[highs:] += np.abs(np.random.normal(0.e0, noises, self._ft.size-highs))
     self._yp = np.fft.irfft(self._ft)
 
   def _smooth_signal(self):
@@ -217,6 +220,7 @@ class SubModuleWindow(BaseWindow):
     ax2.set_ylabel("data")
     ax1.legend(bbox_to_anchor=(1.05,1), loc="upper left", frameon=False)
     fig.tight_layout()
+    fig.savefig(self._fout.name)
     return fig
 
 if __name__ == "__main__":

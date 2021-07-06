@@ -18,6 +18,7 @@ import sys
 if sys.version_info[0] < 3:
   raise Exception("Python 2 is no longer supported, please use Python 3!")
 
+import tempfile, os
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib as mpl
 mpl.use("TkAgg")
@@ -49,7 +50,7 @@ class SubModuleWindow(BaseWindow):
 
 
   def __init__(self, configfile=None, launch=False):
-    super().__init__(configfile, launch)
+    super().__init__(configfile, launch, makeTempFile=True)
 
 
   def _configure_layout(self):
@@ -65,7 +66,7 @@ class SubModuleWindow(BaseWindow):
       [ sg.Button("Submit", key="-SUBMIT-",bind_return_key=True,visible=False)                                                                                         ]
       ]
 
-    canvas = [[sg.Canvas(key="-CANVAS-")]]
+    canvas = [[sg.Image(key="-IMAGE-")]]
 
     self.layout = [
         [
@@ -101,28 +102,30 @@ class SubModuleWindow(BaseWindow):
     elif event == "-SUBMIT-":
       self._data()
       self._pad()
+      self._draw()
 
     elif event in ("-INPUT-PAD-","-INPUT-NUM-"):
       self._pad()
+      self._draw()
 
     elif event == "-RAND-":
       self._f = lambda x: np.random.random(x.size)
       self._data(user_func=False)
       self._pad()
-
-    self._draw()
+      self._draw()
 
     return False
 
   def _draw(self):
     figure = self._plot_fft()
-    if self._figure_agg: # ** IMPORTANT ** Clean up previous drawing before drawing again
-        self._figure_agg.get_tk_widget().forget()
-        plt.close("all")
-    figure_canvas_agg = FigureCanvasTkAgg(figure, self.window["-CANVAS-"].TKCanvas)
-    figure_canvas_agg.draw()
-    figure_canvas_agg.get_tk_widget().pack(side="top", fill="both", expand=1)
-    self._figure_agg =  figure_canvas_agg
+    self.window["-IMAGE-"].update(filename=self._fout.name)
+    # if self._figure_agg: # ** IMPORTANT ** Clean up previous drawing before drawing again
+    #     self._figure_agg.get_tk_widget().forget()
+    #     plt.close("all")
+    # figure_canvas_agg = FigureCanvasTkAgg(figure, self.window["-CANVAS-"].TKCanvas)
+    # figure_canvas_agg.draw()
+    # figure_canvas_agg.get_tk_widget().pack(side="top", fill="both", expand=1)
+    # self._figure_agg =  figure_canvas_agg
 
 
   def _data(self, user_func=True):
@@ -188,7 +191,7 @@ class SubModuleWindow(BaseWindow):
     ax2.set_xlim(left=0.0)
     ax2.xaxis.set_ticks(np.arange(0,self._yf.size//2+1,8))
     ax2.set_ylabel("power spectra")
-    ax2.set_yscale("log",base=2)
+    ax2.set_yscale("log",basey=2)
     ax2.yaxis.set_ticks([2**-6, 2**0, 2**6, 2**12])
     labels = [item.get_text() for item in ax2.get_yticklabels()]
     labels = ["0", r"$2^0$", r"$2^6$", r"$2^{12}$"]
@@ -196,6 +199,7 @@ class SubModuleWindow(BaseWindow):
 
     ax1.legend(bbox_to_anchor=(1.05,1), loc="upper left", frameon=False)
     fig.tight_layout()
+    fig.savefig(self._fout.name)
     return fig
 
 if __name__ == "__main__":

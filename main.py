@@ -18,18 +18,24 @@ import PySimpleGUI as sg
 
 from iea.course.course_window import CourseWindow
 
+
 def main():
 
+  # Hardcoded to point to a specific course config, will abstract away, eventually
+  # Sets up home page for course window
   course = CourseWindow(configfile='iea/acs2/config/acs2.yml', launch=True)
 
+  # Event loop used to allow both home window and submodule windows to coexist
   while True:
     window, event, values = sg.read_all_windows()
 
     if window == course.window:
+      # Check home window events
       close_all = course.check_event(event,values)
       if close_all:
         break
     else:
+      # Check for submodule window event
       window_closed = course.subwindows[window].check_event(event,values)
       if window_closed:
         course.subwindows.pop(window)

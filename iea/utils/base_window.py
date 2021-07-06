@@ -18,6 +18,7 @@ if sys.version[0] != "3":
     raise Exception("Python 2 is no longer supported, please use Python 3")
 
 import os, pathlib, yaml
+import tempfile
 import PySimpleGUI as sg
 
 
@@ -36,13 +37,42 @@ class BaseWindow:
   }
 
 
-  def __init__(self, configfile=None, launch=False):
+  def __init__(self, configfile=None, launch=False, makeTempFile=False):
+
+    self._arch = self._determine_arch()
+
+    if makeTempFile:
+      tempdict = {"suffix": ".png"}
+      if self._arch == "windows":
+        tempdict['delete'] = False
+      self._fout = tempfile.NamedTemporaryFile(**tempdict)
 
     self.configfile = configfile
     self._configure()
     if launch:
       self.launch()
 
+
+  def __del__(self):
+    if self._arch == "windows":
+      self._fout.close()
+      print(f"Removing Tempfile {self._fout.name}")
+      os.remove(self._fout.name)
+
+
+  def _determine_arch(self):
+    # Used to determine OS architecture necessary for some submodules
+    if sg.running_linux():
+        return "linux"
+    if sg.running_mac():
+        return "mac"
+    if sg.running_windows():
+        return "windows"
+    answer = input("Neither Linux/Mac/Windows detected, \n\
+      IEA may not function correctly. \n\
+      Wish to proceed [y]/N?")
+    if answer.lower().replace(" ", "") in ("n", "no"):
+      sys.exit("\nAborting IEA\n")
 
   def _configure(self):
     self._configure_window()

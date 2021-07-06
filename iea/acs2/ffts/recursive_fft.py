@@ -30,6 +30,7 @@ import pydot
 
 from iea.utils.base_window import BaseWindow
 
+from IPython import embed
 
 def algorithm_text(line=[24]):
   # Dirty way of dealing with the changing algorithm text format as we cycle through portions of it
@@ -148,20 +149,14 @@ class FFT_graphable_num:
 class SubModuleWindow(BaseWindow):
 
   title = "FFTs: Recursive DFT"
-  _fout = tempfile.TemporaryFile(delete=False)
   wincfg = {}
   _counter = 0
   _imgs = []
   _algo = []
 
   def __init__(self, configfile=None, launch=False):
-    super().__init__(configfile, launch)
+    super().__init__(configfile, launch, makeTempFile=True)
 
-
-  def __del__(self):
-    self._fout.close()
-    print(f"Removing Tempfile {self._fout.name}")
-    os.remove(self._fout.name)
 
   def _configure_layout(self):
     sg.theme("Dark") # window theme
