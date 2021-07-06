@@ -7,7 +7,10 @@ At this time, the interactive educational applet is best installed through `cond
 Suggested setup is via a fresh `conda` environment:
 
 `conda create --name ENV-NAME -c conda-forge --file requirements.txt`
+
 `conda activate ENV-NAME` or `source activate ENV-NAME` if using MacOS
+
 `python main.py` in the parent level DSC_IEA directory.
     
-    
+Bug Notes: There are some small bugs littered throughout that can cause crashes from unexpected user input. Those will be solved with some exception handling.
+
