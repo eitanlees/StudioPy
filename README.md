@@ -6,7 +6,7 @@ At this time, the interactive educational applet is best installed through `cond
 
 To setup the environment correctly, you can create a new `conda` environment or install dependencies in an existing environment. There is a requirements.txt file provided with this repo to faciliate setup.
 
-For a new environment, use `conda create --name ENV-NAME -c conda-forge --file requirements.txt`, it is required to specify the `conda-forge` channel to obtain PySimpleGUI through `conda`. In an existing `conda` environment, simply use `conda install --name ENV-NAME -c conda-forge --file requirements.txt`
+For a new environment, use `conda create --name ENV-NAME -c conda-forge --file requirements.txt`. It is required to specify the `conda-forge` channel to obtain PySimpleGUI through `conda`. In an existing `conda` environment, simply use `conda install --name ENV-NAME -c conda-forge --file requirements.txt`
 
 Once these packages are installed, simply use `python main.py` in the top-level directory to run the applet and learn!
 
