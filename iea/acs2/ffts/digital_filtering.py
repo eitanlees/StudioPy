@@ -18,12 +18,9 @@ import sys
 if sys.version_info[0] < 3:
   raise Exception("Python 2 is no longer supported, please use Python 3!")
 
-import tempfile, os
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib as mpl
 mpl.use("TkAgg")
 import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
 import PySimpleGUI as sg
 import numpy as np
 
@@ -32,7 +29,6 @@ from sympy import sympify
 from sympy.utilities.lambdify import lambdify
 
 from iea.utils.base_window import BaseWindow
-
 
 class SubModuleWindow(BaseWindow):
 

@@ -16,8 +16,6 @@ import sys
 if sys.version_info[0] < 3:
   raise Exception("Python 2 is no longer supported, please use Python 3!")
 
-import os
-import tempfile
 import warnings
 warnings.simplefilter(action="ignore", category=FutureWarning)
 from collections import OrderedDict
@@ -29,8 +27,6 @@ from graphviz import Digraph, Source
 import pydot
 
 from iea.utils.base_window import BaseWindow
-
-from IPython import embed
 
 def algorithm_text(line=[24]):
   # Dirty way of dealing with the changing algorithm text format as we cycle through portions of it

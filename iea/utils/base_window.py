@@ -40,8 +40,8 @@ class BaseWindow:
   def __init__(self, configfile=None, launch=False, makeTempFile=False):
 
     self._arch = self._determine_arch()
-
-    if makeTempFile:
+    self._tmp = makeTempFile
+    if self._tmp:
       tempdict = {"suffix": ".png"}
       if self._arch == "windows":
         tempdict['delete'] = False
@@ -54,9 +54,9 @@ class BaseWindow:
 
 
   def __del__(self):
-    if self._arch == "windows":
+    if self._arch == "windows" and self._tmp:
       self._fout.close()
-      print(f"Removing Tempfile {self._fout.name}")
+      # print(f"Removing Tempfile {self._fout.name}")
       os.remove(self._fout.name)
 
 
