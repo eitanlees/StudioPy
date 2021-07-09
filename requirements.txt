@@ -1,9 +1,0 @@
-sympy
-numpy
-scipy
-matplotlib
-PyYAML
-PySimpleGUI
-graphviz
-python-graphviz
-pydot
