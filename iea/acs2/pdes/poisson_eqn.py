@@ -5,7 +5,7 @@ Date Created: 2021-07-05
     Department of Scientific Computing
     Florida State University
 
-Laplace Equation Demonstration
+Poisson Equation Demonstration
 
 """
 
@@ -28,7 +28,7 @@ pi = np.pi
 
 class SubModuleWindow(BaseWindow):
 
-  title="PDEs: Laplace Equation"
+  title="PDEs: Poisson Equation"
   _solver = "Jacobi"
   _npts = 16
   _func = lambda junk,x: x*np.sin(pi*x**2) + x**2*np.cos(pi*x**(0.5))
@@ -115,7 +115,7 @@ class SubModuleWindow(BaseWindow):
 
     elif event == "-NEXT-":
       self._cnt+=1
-      [self._laplace_step() for _ in range(10)]
+      [self._poisson_step() for _ in range(10)]
       self._draw()
       self.window["-NEXT-"].update(f"Next - {self._cnt}")
 
@@ -171,7 +171,7 @@ class SubModuleWindow(BaseWindow):
 
 
   def _forcing(self):
-    self._fx = np.zeros(self._npts)
+    self._fx = -self._x * (self._x+3.0) * np.exp(self._x)
 
   def _jacobi(self):
     for i in range(self._npts):
@@ -194,7 +194,7 @@ class SubModuleWindow(BaseWindow):
 
       self._u[i] = (1.0-self._w)*self._u0[i] + self._w*(self._fx[i] - left - right)/self._A[i,i]
 
-  def _laplace_step(self):
+  def _poisson_step(self):
     if self._solver=='Jacobi':
       self._jacobi()
     elif self._solver == "Gauss-Seidel":

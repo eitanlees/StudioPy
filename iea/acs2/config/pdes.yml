@@ -4,6 +4,7 @@ location: "iea/acs2/pdes/"
 
 submodules:
   Laplace Equation: "laplace_eqn.py"
+  Poisson Equation: "poisson_eqn.py"
   Heat Equation: "heat_eqn.py"
   Wave Equation: "wave_eqn.py"
 
