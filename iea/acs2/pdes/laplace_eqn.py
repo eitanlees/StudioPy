@@ -51,21 +51,22 @@ class SubModuleWindow(BaseWindow):
     nxt_d = { "size":( 10,1), "key":"-NEXT-"  }
     exi_d = { "size":( 10,1), "key":"-EXIT-"  }
     fun_d = { "size":(31,1), "key":"-IFUNC-" }
-    smp_d = { "default_value":self._npts, "enable_events":True, "key":"-PNTS-",  "size":(4,5) }
+    smp_d = { "default_value":self._npts, "enable_events":True,   "key":"-PNTS-",  "size":(4,5) }
     sub_d = { "bind_return_key":True,       "visible":False,      "key":"-SUBMIT-" }
 
     Radio_Jacobi = sg.Radio("Jacobi", "-RADIO_SOLVER-", default=True, enable_events=True, key="-JACOBI-")
     Radio_GaussSeidel = sg.Radio("Gauss-Seidel", "-RADIO_SOLVER-", default=False, enable_events=True, key="-GAUSS-SEIDEL-")
     Radio_SOR = sg.Radio("SOR", "-RADIO_SOLVER-", default=False, enable_events=True, key="-SOR-")
     buttons = [
-      [ sg.Text("", size=(1,1))                                                 ],
-      [ sg.Button("Next - 0",  **nxt_d)                                             ],
-      [ sg.Text("", size=(1,1))                                                 ],
-      [ sg.Combo(samp, **smp_d), sg.Text("# of Mesh Points", **txt_d)        ],
-      [ sg.Text("", size=(1,1))                                                 ],
-      [ sg.Text("Iterative Solver", **txt_d), Radio_Jacobi, Radio_GaussSeidel, Radio_SOR ],
-      [ sg.Text("", size=(1,1))                                                 ],
-      [ sg.Button("Exit", **exi_d), sg.Button("Submit", **sub_d),               ],
+      [ sg.Text("", size=(1,1))                                            ],
+      [ sg.Button("Next - 0",  **nxt_d)                                    ],
+      [ sg.Text("", size=(1,1))                                            ],
+      [ sg.Combo(samp, **smp_d), sg.Text("# of Mesh Points", size=(15,1))  ],
+      [ sg.Text("", size=(1,1))                                            ],
+      [ sg.Text("Iterative Solver", size=(12,1))                           ],
+      [ Radio_Jacobi, Radio_GaussSeidel, Radio_SOR                         ],
+      [ sg.Text("", size=(1,1))                                            ],
+      [ sg.Button("Exit", **exi_d), sg.Button("Submit", **sub_d),          ],
       ]
 
     canvas = [[sg.Image(key="-IMAGE-")]]
@@ -84,6 +85,7 @@ class SubModuleWindow(BaseWindow):
       self._forcing()
       self._ICs()
       self._BCs()
+      self._fft()
       super().launch()
       self._draw()
 
@@ -111,11 +113,13 @@ class SubModuleWindow(BaseWindow):
       self._forcing()
       self._ICs()
       self._BCs()
+      self._fft()
       self._draw()
 
     elif event == "-NEXT-":
       self._cnt+=1
       [self._laplace_step() for _ in range(10)]
+      self._fft()
       self._draw()
       self.window["-NEXT-"].update(f"Next - {self._cnt}")
 
@@ -124,14 +128,24 @@ class SubModuleWindow(BaseWindow):
     # Plot both datasets
     self.window["-NEXT-"].update(f"Next - {self._cnt}")
     plt.close("all")
-    # plt.pcolormesh(self._Xm, self._Ym, self._u, cmap="jet", vmin=self._vmin, vmax=self._vmax)
-    plt.scatter(self._x, self._u)
+    
+    fig, (ax1,ax2) = plt.subplots(2)
+
+    ax1.scatter(self._x, self._u)
+    ax2.scatter(self._freq, self._spec)
+
     # Add any plot frills you want
-    plt.ylim((self._vmin, self._vmax))
-    plt.xlim((0.0,1.0))
-    plt.xlabel("x")
-    plt.ylabel("y")
-    # plt.colorbar()
+    ax1.set_ylim((self._vmin, self._vmax))
+    ax1.set_xlim((0.0,1.0))
+    ax1.set_xlabel("x")
+    ax1.set_ylabel("y")
+
+    ax2.set_yscale("log",basey=2)
+    ax2.set_ylim((2**(-6),2**12))
+    ax2.set_xlim(left=0.0)
+    ax2.set_xlabel("frequency")
+    ax2.set_ylabel("power")
+    
     plt.tight_layout()
     plt.savefig(self._fout.name)
     self.window["-IMAGE-"].update(filename=self._fout.name)
@@ -169,7 +183,6 @@ class SubModuleWindow(BaseWindow):
     self._A += np.diag(temp[::-1],1)
     self._A /= self._h**2
 
-
   def _forcing(self):
     self._fx = np.zeros(self._npts)
 
@@ -178,7 +191,6 @@ class SubModuleWindow(BaseWindow):
       self._u[i]  = self._fx[i]
       self._u[i] -= sum([ self._A[i,j]*self._u0[j] for j in range(self._npts) if j != i ])
       self._u[i] /= self._A[i,i]
-
 
   def _gauss_seidel(self):
     for i in range(self._npts):
@@ -206,6 +218,12 @@ class SubModuleWindow(BaseWindow):
     self._norm = la.norm(self._u-self._u0) / la.norm(self._u0)
     self._u0 = self._u.copy()
 
+
+  def _fft(self):
+      self._dft  = np.fft.fft(self._u)
+      self._spec = self._dft * np.conj(self._dft)
+      self._freq = np.fft.fftfreq(self._npts, 1.0/self._npts)
+      self._spec = np.where(self._spec < 2**(-6), 2**-6, self._spec)
 
 if __name__ == "__main__":
 

@@ -51,21 +51,22 @@ class SubModuleWindow(BaseWindow):
     nxt_d = { "size":( 10,1), "key":"-NEXT-"  }
     exi_d = { "size":( 10,1), "key":"-EXIT-"  }
     fun_d = { "size":(31,1), "key":"-IFUNC-" }
-    smp_d = { "default_value":self._npts, "enable_events":True, "key":"-PNTS-",  "size":(4,5) }
+    smp_d = { "default_value":self._npts, "enable_events":True,   "key":"-PNTS-",  "size":(4,5) }
     sub_d = { "bind_return_key":True,       "visible":False,      "key":"-SUBMIT-" }
 
     Radio_Jacobi = sg.Radio("Jacobi", "-RADIO_SOLVER-", default=True, enable_events=True, key="-JACOBI-")
     Radio_GaussSeidel = sg.Radio("Gauss-Seidel", "-RADIO_SOLVER-", default=False, enable_events=True, key="-GAUSS-SEIDEL-")
     Radio_SOR = sg.Radio("SOR", "-RADIO_SOLVER-", default=False, enable_events=True, key="-SOR-")
     buttons = [
-      [ sg.Text("", size=(1,1))                                                 ],
-      [ sg.Button("Next - 0",  **nxt_d)                                             ],
-      [ sg.Text("", size=(1,1))                                                 ],
-      [ sg.Combo(samp, **smp_d), sg.Text("# of Mesh Points", **txt_d)        ],
-      [ sg.Text("", size=(1,1))                                                 ],
-      [ sg.Text("Iterative Solver", **txt_d), Radio_Jacobi, Radio_GaussSeidel, Radio_SOR ],
-      [ sg.Text("", size=(1,1))                                                 ],
-      [ sg.Button("Exit", **exi_d), sg.Button("Submit", **sub_d),               ],
+      [ sg.Text("", size=(1,1))                                            ],
+      [ sg.Button("Next - 0",  **nxt_d)                                    ],
+      [ sg.Text("", size=(1,1))                                            ],
+      [ sg.Combo(samp, **smp_d), sg.Text("# of Mesh Points", size=(15,1))  ],
+      [ sg.Text("", size=(1,1))                                            ],
+      [ sg.Text("Iterative Solver", size=(12,1))                           ],
+      [ Radio_Jacobi, Radio_GaussSeidel, Radio_SOR                         ],
+      [ sg.Text("", size=(1,1))                                            ],
+      [ sg.Button("Exit", **exi_d), sg.Button("Submit", **sub_d),          ],
       ]
 
     canvas = [[sg.Image(key="-IMAGE-")]]
