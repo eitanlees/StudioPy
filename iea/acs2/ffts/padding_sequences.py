@@ -30,6 +30,8 @@ from sympy.utilities.lambdify import lambdify
 
 from iea.utils.base_window import BaseWindow
 
+plt.style.use("dark_background")
+
 class SubModuleWindow(BaseWindow):
 
   title = "FFTs: Padding Sequences"
@@ -116,14 +118,6 @@ class SubModuleWindow(BaseWindow):
   def _draw(self):
     figure = self._plot_fft()
     self.window["-IMAGE-"].update(filename=self._fout.name)
-    # if self._figure_agg: # ** IMPORTANT ** Clean up previous drawing before drawing again
-    #     self._figure_agg.get_tk_widget().forget()
-    #     plt.close("all")
-    # figure_canvas_agg = FigureCanvasTkAgg(figure, self.window["-CANVAS-"].TKCanvas)
-    # figure_canvas_agg.draw()
-    # figure_canvas_agg.get_tk_widget().pack(side="top", fill="both", expand=1)
-    # self._figure_agg =  figure_canvas_agg
-
 
   def _data(self, user_func=True):
     if user_func:
@@ -173,12 +167,12 @@ class SubModuleWindow(BaseWindow):
 
     # Plot both datasets
     fig,(ax1,ax2) = plt.subplots(2)
-    ax1.scatter(self._xf,self._yf,label="Full", s=10, color="b")
-    ax1.scatter(self._xf,self._yp,label="Padded", s=10, color="k")
+    ax1.scatter(self._xf,self._yf,label="Full", s=10, color="tab:pink")
+    ax1.scatter(self._xf,self._yp,label="Padded", s=10, color="w")
 
     # Plot both power spectra
-    ax2.scatter(freq[idx],fps[idx], s=10, color="b")
-    ax2.scatter(freq[idx],pps[idx], s=10, color="k")
+    ax2.scatter(freq[idx],fps[idx], s=10, color="tab:pink")
+    ax2.scatter(freq[idx],pps[idx], s=10, color="w")
 
     # Add any plot frills you want
     ax1.set_xlabel("spatial domain")

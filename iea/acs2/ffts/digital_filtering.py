@@ -30,6 +30,8 @@ from sympy.utilities.lambdify import lambdify
 
 from iea.utils.base_window import BaseWindow
 
+plt.style.use("dark_background")
+
 class SubModuleWindow(BaseWindow):
 
   title = "FFTs: Digital Filtering"
@@ -156,13 +158,7 @@ class SubModuleWindow(BaseWindow):
   def _draw(self):
     figure = self._make_plot()
     self.window["-IMAGE-"].update(filename=self._fout.name)
-    # if self._figure_agg: # ** IMPORTANT ** Clean up previous drawing before drawing again
-    #     self._figure_agg.get_tk_widget().forget()
-    #     plt.close("all")
-    # figure_canvas_agg = FigureCanvasTkAgg(figure, self.window["-CANVAS-"].TKCanvas)
-    # figure_canvas_agg.draw()
-    # figure_canvas_agg.get_tk_widget().pack(side="top", fill="both", expand=1)
-    # self._figure_agg =  figure_canvas_agg
+
 
   def _generate_signal(self):
     try:
@@ -200,12 +196,12 @@ class SubModuleWindow(BaseWindow):
 
     # Plot both datasets
     fig,(ax1,ax2) = plt.subplots(2)
-    ax1.plot(self._x,self._yi,label="Full", color="b")
-    ax1.scatter(self._x,self._yp,label="Padded", s=10, color="k")
+    ax1.plot(self._x,self._yi,label="Full", color="tab:pink")
+    ax1.scatter(self._x,self._yp,label="Padded", s=10, color="w")
 
     # Plot both power spectra
-    ax2.plot(self._x,self._yi, color="b")
-    ax2.scatter(self._x,self._ys, s=10, color="k")
+    ax2.plot(self._x,self._yi, color="tab:pink")
+    ax2.scatter(self._x,self._ys, s=10, color="w")
 
     # Add any plot frills you want
     ax1.set_ylim((-0.5,1.5))
