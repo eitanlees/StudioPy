@@ -31,7 +31,7 @@ class SubModuleWindow(BaseWindow):
   title="PDEs: Laplace Equation"
   _solver = "Jacobi"
   _npts = 16
-  _func = lambda junk,x: x*np.sin(pi*x**2) + x**2*np.cos(pi*x**(0.5))
+  _func = lambda self,x: x*np.sin(pi*x**2) + x**2*np.cos(pi*x**(0.5))
   _BC_type = "Dirichlet"
   _levels = 10
   _norm = np.inf
@@ -59,7 +59,7 @@ class SubModuleWindow(BaseWindow):
     Radio_SOR = sg.Radio("SOR", "-RADIO_SOLVER-", default=False, enable_events=True, key="-SOR-")
     buttons = [
       [ sg.Text("", size=(1,1))                                            ],
-      [ sg.Button("Next - 0",  **nxt_d)                                    ],
+      [ sg.Button("Steps - 0",  **nxt_d)                                    ],
       [ sg.Text("", size=(1,1))                                            ],
       [ sg.Combo(samp, **smp_d), sg.Text("# of Mesh Points", size=(15,1))  ],
       [ sg.Text("", size=(1,1))                                            ],
@@ -117,16 +117,17 @@ class SubModuleWindow(BaseWindow):
       self._draw()
 
     elif event == "-NEXT-":
-      self._cnt+=1
-      [self._laplace_step() for _ in range(10)]
-      self._fft()
-      self._draw()
-      self.window["-NEXT-"].update(f"Next - {self._cnt}")
+      if self._norm > 1e-3:
+        self._cnt+=10
+        [self._laplace_step() for _ in range(10)]
+        self._fft()
+        self._draw()
+        self.window["-NEXT-"].update(f"Steps - {self._cnt}")
 
 
   def _draw(self):
     # Plot both datasets
-    self.window["-NEXT-"].update(f"Next - {self._cnt}")
+    self.window["-NEXT-"].update(f"Steps - {self._cnt}")
     plt.close("all")
     
     fig, (ax1,ax2) = plt.subplots(2)

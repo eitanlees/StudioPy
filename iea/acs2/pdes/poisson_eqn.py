@@ -25,13 +25,14 @@ from iea.utils.base_window import BaseWindow
 
 plt.style.use("dark_background")
 pi = np.pi
+G = 6.674e-1
 
 class SubModuleWindow(BaseWindow):
 
   title="PDEs: Poisson Equation"
   _solver = "Jacobi"
   _npts = 16
-  _func = lambda junk,x: x*np.sin(pi*x**2) + x**2*np.cos(pi*x**(0.5))
+  _func = lambda self,x: x*np.sin(pi*x**2) + x**2*np.cos(pi*x**(0.5))
   _BC_type = "Dirichlet"
   _levels = 10
   _norm = np.inf
@@ -59,7 +60,7 @@ class SubModuleWindow(BaseWindow):
     Radio_SOR = sg.Radio("SOR", "-RADIO_SOLVER-", default=False, enable_events=True, key="-SOR-")
     buttons = [
       [ sg.Text("", size=(1,1))                                            ],
-      [ sg.Button("Next - 0",  **nxt_d)                                    ],
+      [ sg.Button("Steps - 0",  **nxt_d)                                    ],
       [ sg.Text("", size=(1,1))                                            ],
       [ sg.Combo(samp, **smp_d), sg.Text("# of Mesh Points", size=(15,1))  ],
       [ sg.Text("", size=(1,1))                                            ],
@@ -115,20 +116,21 @@ class SubModuleWindow(BaseWindow):
       self._draw()
 
     elif event == "-NEXT-":
-      self._cnt+=1
-      [self._poisson_step() for _ in range(10)]
-      self._draw()
-      self.window["-NEXT-"].update(f"Next - {self._cnt}")
+      if self._norm > 1e-3:
+        self._cnt+=10
+        [self._poisson_step() for _ in range(10)]
+        self._draw()
+        self.window["-NEXT-"].update(f"Steps - {self._cnt}")
 
 
   def _draw(self):
     # Plot both datasets
-    self.window["-NEXT-"].update(f"Next - {self._cnt}")
+    self.window["-NEXT-"].update(f"Steps - {self._cnt}")
     plt.close("all")
     # plt.pcolormesh(self._Xm, self._Ym, self._u, cmap="jet", vmin=self._vmin, vmax=self._vmax)
     plt.scatter(self._x, self._u)
     # Add any plot frills you want
-    plt.ylim((self._vmin, self._vmax))
+    # plt.ylim((self._vmin, self._vmax))
     plt.xlim((0.0,1.0))
     plt.xlabel("x")
     plt.ylabel("y")
@@ -139,7 +141,8 @@ class SubModuleWindow(BaseWindow):
 
 
   def _grid(self):
-    self._x = np.linspace(0.0,1.0,self._npts)
+    self._rho = np.geomspace(1e10,1e-10, self._npts)
+    self._x = np.linspace(0.01,1.0,self._npts)
     self._h = self._x[1] - self._x[0]
 
   def _ICs(self):
@@ -149,12 +152,12 @@ class SubModuleWindow(BaseWindow):
     self._BCs()
     self._u0 = self._u.copy()
     self._vmin = -0.5
-    self._vmax = +0.5
+    self._vmax = +1.5
 
   def _BCs(self):
     if self._BC_type == 'Dirichlet':
       self._u[0] = 0.0 #np.sin(np.sqrt(np.pi)*self._x[0]**2.0)
-      self._u[-1] = 0.0 #np.exp(self._x[-1])
+      self._u[-1] = 1.0 #np.exp(self._x[-1])
 
   def _matrix_op(self):
 
@@ -172,7 +175,9 @@ class SubModuleWindow(BaseWindow):
 
 
   def _forcing(self):
-    self._fx = -self._x * (self._x+3.0) * np.exp(self._x)
+    self._fx = np.zeros_like(self._x)
+    self._fx = -4.0 * pi * G * self._rho
+    self._fx /= self._fx.min()
 
   def _jacobi(self):
     for i in range(self._npts):
