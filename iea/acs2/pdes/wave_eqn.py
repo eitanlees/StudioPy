@@ -30,8 +30,8 @@ class SubModuleWindow(BaseWindow):
 
   title="PDEs: Wave Equation"
   _solver = "Explicit CTCS"
-  _npts = 64
-  _func = lambda self,x: np.sin(6.0*pi*x)
+  _npts = 128
+  _func = lambda self,x,: x*1.0 * np.sin(4.0*pi*x**2.0)
   _gunc = lambda self,x,t: np.zeros_like(x)
   _BC_type = "Dirichlet"
   _levels = 10
@@ -49,7 +49,7 @@ class SubModuleWindow(BaseWindow):
 
   def _configure_layout(self):
     # sg.Theme("")
-    samp  = [16,32,64]
+    samp  = [16,32,64,128]
     slvs  = ["Explicit CTCS", "Backward Euler", "Crank Nicholson"]
     smp_d = { "default_value":self._npts, "enable_events":True, "key":"-PNTS-",  "size":(4,5) }
     slv_d = { "default_value":"Explicit CTCS", "enable_events":True, "key":"-SLVS-",  "size":(4,5) }
@@ -100,6 +100,7 @@ class SubModuleWindow(BaseWindow):
       self._ICs()
       super().launch()
       self._stable_dt()
+      self._fft()
       self._draw()
 
   def event_loop(self):
@@ -136,12 +137,14 @@ class SubModuleWindow(BaseWindow):
       self._grid()
       self._stable_dt()
       self._ICs()
+      self._fft()
       self._draw()
 
     elif event == "-NEXT-":
       # if self._t < self._tmax:
         self._cnt+=self._nsteps
         [self._wave_step() for _ in range(self._nsteps)]
+        self._fft()
         self._draw()
         self.window["-NEXT-"].update(f"Steps - {self._cnt}")
 
@@ -151,9 +154,10 @@ class SubModuleWindow(BaseWindow):
     self.window["-NEXT-"].update(f"Steps - {self._cnt}")
     plt.close("all")
     
-    fig, (ax1) = plt.subplots(1)
+    fig, (ax1,ax2) = plt.subplots(2)
 
-    ax1.scatter(self._x, self._u)
+    ax1.plot(self._x, self._u, label='Computed')
+    ax1.plot(self._x, self._orig, label='Original')
     
     # Add any plot frills you want
     if (not self._u.max() > self._vmax or not self._u.min() < self._vmin):
@@ -161,6 +165,15 @@ class SubModuleWindow(BaseWindow):
     ax1.set_xlim((0.0,1.0))
     ax1.set_xlabel("x")
     ax1.set_ylabel("y")
+    ax1.legend()
+
+    ax2.scatter(self._freq, self._spec)
+    ax2.set_yscale("log",basey=2)
+    ax2.set_ylim((2**(-12),2**12))
+    ax2.set_xlim(left=0.0)
+    ax2.set_xlabel("frequency")
+    ax2.set_ylabel("power")
+
 
     plt.tight_layout()
     plt.savefig(self._fout.name)
@@ -184,14 +197,15 @@ class SubModuleWindow(BaseWindow):
     self._u0 = self._u.copy()
     self._u = self._u1.copy()
     self._BCs()
+    self._orig = self._u1.copy()
 
     self._vmin = -1.25
     self._vmax = +1.25
 
   def _BCs(self):
     if self._BC_type == 'Dirichlet':
-      self._u[0] = 0.0 #np.sin(np.sqrt(np.pi)*self._x[0]**2.0)
-      self._u[-1] = 0.0 #np.exp(self._x[-1])
+      self._u[0] = 0.0
+      self._u[-1] = 0.0
 
   def _stable_dt(self):
     self._stable = self._h / self._cspd
@@ -214,6 +228,13 @@ class SubModuleWindow(BaseWindow):
     self._u[1:-1] = -self._u0[1:-1] + 2.0*self._u1[1:-1] + \
               fact*(self._u1[:-2] - 2.0*self._u1[1:-1] + self._u1[2:]) + \
               (self._dt**2) * self._gunc(self._x[1:-1],self._t)
+
+
+
+  def _fft(self):
+      self._dft  = np.fft.fft(self._u)
+      self._spec = self._dft * np.conj(self._dft)
+      self._freq = np.fft.fftfreq(self._npts+1, 1.0/(self._npts+1))
 
 if __name__ == "__main__":
 
