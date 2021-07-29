@@ -149,6 +149,7 @@ class SubModuleWindow(BaseWindow):
   _counter = 0
   _imgs = []
   _algo = []
+  _inp0 = "0+0j, 0, 0, 0+0j"
 
   def __init__(self, configfile=None, launch=False):
     super().__init__(configfile, launch, makeTempFile=True)
@@ -161,7 +162,7 @@ class SubModuleWindow(BaseWindow):
     col_input = [
       [ sg.Text("", size=(1,1))                                                                                              ],
       [ sg.Text("FFT not initialized...", size=(55,1),key="-PROGRESS-")                                                       ],
-      [ sg.Button("Submit", bind_return_key=True, size=(5,1)), sg.InputText("1+3j, 2, 3, 4+1j", key="-INPUT-" )              ],
+      [ sg.Button("Submit", bind_return_key=True, size=(5,1)), sg.InputText(self._inp0, key="-INPUT-" )              ],
       [ sg.Button("Reset",  bind_return_key=True, size=(5,1)), sg.Text("Reset Graph: Click or press  <r>  key", size=(50,1)) ],
       [ sg.Button("Next",   bind_return_key=True, size=(5,1)), sg.Text("Advance FFT: Click or press  <w>  key", size=(50,1)) ],
       [ sg.Button("Exit",   bind_return_key=True, size=(5,1)), sg.Text("Exit Window: Click or press <ESC> key", size=(50,1)) ],
@@ -197,7 +198,7 @@ class SubModuleWindow(BaseWindow):
       self.wincfg["location"]  = [100,100]
       super().launch()
       self.window["-MULTI-"].update(algorithm_text(line=[0]))
-      self.inp = "0+0j, 0, 0, 0+0j"
+      self.inp = self._inp0
       self._counter = 0
       self._imgs = []
       self._algo = []
@@ -216,10 +217,17 @@ class SubModuleWindow(BaseWindow):
       # Clear any attributes from FFT graph
       FFT_graphable_num.clear()
       self.inp = values["-INPUT-"]
-      x = [complex(i.replace(" ","")) for i in self.inp.split(",")]
-      x = self._fft(x)
-      self.window["-PROGRESS-"].update("FFT initialized! You may proceed...")
-
+      if len(self.inp) == 0:
+        self.inp = self._inp0
+      
+      try:
+        x = [complex(i.replace(" ","")) for i in self.inp.split(",")]
+        x = self._fft(x)
+        self.window["-PROGRESS-"].update("FFT initialized! You may proceed...")
+        self._inp0 = self.inp
+      except:
+        self.window["-PROGRESS-"].update("FFT failed to initialize! Resetting...")
+        self.window["-INPUT-"].update(self._inp0)
 
     elif event in ("Next", "w") and self._counter < len(self._imgs):
       self._imgs[self._counter].write(self._fout.name,format="png")
@@ -232,9 +240,10 @@ class SubModuleWindow(BaseWindow):
 
     elif event in ("Reset", "r"):
       # User gave reset graph command
-      self._default_graph(data=self.inp, update_window=True)
+      self._default_graph(data=self._inp0, update_window=True)
       self.window["-MULTI-"].update(algorithm_text(line=[0]))
       self.window["-PROGRESS-"].update("FFT not initialized...")
+      self.window["-INPUT-"].update(self._inp0)
       self._counter = 0
       self._imgs = []
       self._algo = []

@@ -43,8 +43,9 @@ class SubModuleWindow(BaseWindow):
   _textdct = dict(zip(_textchs,_choices))
 
   _funcstr = "x*cos(x**2)"
+  _funcstr0 = "x*cos(x**2)"
   _padding = "Zeros"
-  _nsamps  = 33
+  _nsamps  = 32
   _x       = symvar("x")
 
 
@@ -60,7 +61,7 @@ class SubModuleWindow(BaseWindow):
     buttons = [
       [ sg.Button("Generate Random Data", key="-RAND-"), sg.Button("Exit", key="-EXIT-")                                                                               ],
       [ sg.Text("Function f(x): PRESS <ENTER>",   size=(25,1)), sg.InputText(self._funcstr, key="-INPUT-FUNC-", size=(20,1))                                          ],
-      [ sg.Text("Number of points", size=(25,1)), sg.Combo([i for i in range(1,65)], key="-INPUT-NUM-", enable_events=True, default_value=self._nsamps, size=(20,20)) ],
+      [ sg.Text("Number of points", size=(25,1)), sg.Combo([i for i in range(1,65)], key="-INPUT-NUM-", enable_events=True, default_value=self._nsamps+1, size=(20,20)) ],
       [ sg.Text("Padding Method",   size=(25,1)), sg.Combo(self._textchs, size=(20,20), key="-INPUT-PAD-", default_value=self._padding, enable_events=True)          ],
       [ sg.Button("Submit", key="-SUBMIT-",bind_return_key=True,visible=False)                                                                                         ]
       ]
@@ -91,8 +92,16 @@ class SubModuleWindow(BaseWindow):
   def check_event(self,event,values):
 
     self._funcstr = values["-INPUT-FUNC-"]
-    self._padding = self._textdct[values["-INPUT-PAD-"]]
-    self._nsamps  = int(values["-INPUT-NUM-"]) - 1
+
+    try:
+      self._padding = self._textdct[values["-INPUT-PAD-"]]
+    except:
+      pass
+
+    try:
+      self._nsamps  = int(values["-INPUT-NUM-"]) - 1
+    except:
+      self._nsamps  = 32
 
     if event in self._EXIT_LIST + ["-EXIT-"]:
       self.window.close()
@@ -126,6 +135,8 @@ class SubModuleWindow(BaseWindow):
         self._f  = lambdify(self._x,expr,"numpy")
       except:
         sg.Popup("[Error] Invalid function given!")
+        self.window["-INPUT-FUNC-"].update(self._funcstr0)
+
     self._xf = np.linspace(0,1,64)    # Spatial domain for data
     self._yf = self._f(self._xf)    # Create full dataset
 

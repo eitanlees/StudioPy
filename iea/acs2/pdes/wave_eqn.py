@@ -121,8 +121,10 @@ class SubModuleWindow(BaseWindow):
       self._stable_dt()
 
     elif event in ("-DT-"):
-      self._dt = float(values["-DT-"])
-      self._stable_dt()
+      try:
+        self._dt = float(values["-DT-"])
+      except:
+        self._dt = 0.8 * self._stable
 
     elif event in ("-RESET-", "-PNTS-", "-Explicit CTCS-", "-Backward Euler-", "-CrankNich-"):
       self._npts   = int(values["-PNTS-"])

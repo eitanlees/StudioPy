@@ -40,6 +40,7 @@ class SubModuleWindow(BaseWindow):
 
   _xvar  = symvar("x")
   _fstr  = "x*cos(x**2)"
+  _fstr0 = "x*cos(x**2)"
   _nsamp = 16
   _ntrnc = 0
   _x     = np.linspace(0,1,_nsamp)
@@ -59,7 +60,7 @@ class SubModuleWindow(BaseWindow):
     # Set up the course window BACK and EXIT buttons
     sg.theme("Dark")    
     perc  = [0,1,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,98,99,100]
-    snr   = [0.01,0.1,1,10,100]
+    snr   = [0.01,0.1,1,10]
     samp  = [16,32,64,128]
     b1,b2 = "Random Noise", "Systematic Noise"
     ran_d = { "key":"-RAND-"}
@@ -111,8 +112,15 @@ class SubModuleWindow(BaseWindow):
 
   def check_event(self,event,values):
 
-    self._nsamp = int(values["-SAMP-"])
-    self._ntrnc = int(values["-TRUNC-"])
+    try:
+      self._nsamp = int(values["-SAMP-"])
+    except:
+      pass
+
+    try:
+      self._ntrnc = int(values["-TRUNC-"])
+    except:
+      pass
 
     if event in self._EXIT_LIST + ["-EXIT-"]:
       self.window.close()
@@ -148,6 +156,10 @@ class SubModuleWindow(BaseWindow):
       self._draw()
 
     elif event == "-SNR-":
+      try:
+        self._snr = float(values["-SNR-"])
+      except:
+        pass
       self._random_noise()
       self._smooth_signal()
       self._draw()
@@ -166,6 +178,11 @@ class SubModuleWindow(BaseWindow):
       f = lambdify(self._xvar,self._f,"numpy")
     except:
       sg.Popup("[Error] Invalid Function!")
+      self._f = sympify(self._fstr0)
+      self._fstr = self._fstr0
+      f = lambdify(self._xvar,self._f,"numpy")
+      self.window["-IFUNC-"].update(self._fstr0)
+
     self._yi = f(self._x)
     self._ys = f(self._x)
     self._yp = f(self._x)
