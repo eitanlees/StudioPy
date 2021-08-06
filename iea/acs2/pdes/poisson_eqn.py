@@ -238,7 +238,6 @@ class SubModuleWindow(BaseWindow):
       self._dft  = np.fft.fft(self._u)
       self._spec = np.abs(self._dft * np.conj(self._dft))
       self._freq = np.fft.fftfreq(self._npts, 1.0/self._npts)
-      print(self._freq,self._dft)
       self._spec = np.where(self._spec < 2**(-4), 2**-4, self._spec)
 
 if __name__ == "__main__":

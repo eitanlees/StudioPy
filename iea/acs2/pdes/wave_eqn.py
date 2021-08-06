@@ -53,7 +53,7 @@ class SubModuleWindow(BaseWindow):
     slvs  = ["Explicit CTCS", "Backward Euler", "Crank Nicholson"]
     smp_d = { "default_value":self._npts, "enable_events":True, "key":"-PNTS-",  "size":(4,5) }
     slv_d = { "default_value":"Explicit CTCS", "enable_events":True, "key":"-SLVS-",  "size":(4,5) }
-    stp_d = { "default_value":self._nsteps, "enable_events":True, "key":"-STEPS-",  "size":(35,20),  "resolution":10,  "orientation":"horizontal" }
+    stp_d = { "default_value":self._nsteps, "enable_events":True, "key":"-STEPS-",  "size":(35,20),  "orientation":"horizontal" }
     csp_d = { "default_value":self._cspd, "enable_events":True, "key":"-CSPD-",  "size":(35,20), "resolution":0.01,  "orientation":"horizontal" }
     dts_d = { "size":(10,1), "enable_events": True, "key":"-DT-"}
 
@@ -114,7 +114,10 @@ class SubModuleWindow(BaseWindow):
       return True
  
     elif event in ("-STEPS-"):
-      self._nsteps = int(values["-STEPS-"])
+      try:
+        self._nsteps = int(values["-STEPS-"])
+      except:
+        self._nsteps = 1
 
     elif event in ("-CSPD-"):
       self._cspd = float(values["-CSPD-"])

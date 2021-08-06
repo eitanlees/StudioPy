@@ -51,7 +51,7 @@ class SubModuleWindow(BaseWindow):
     slvs  = ["Explicit FTCS", "Backward Euler", "Crank Nicholson"]
     smp_d = { "default_value":self._npts, "enable_events":True, "key":"-PNTS-",  "size":(4,5) }
     slv_d = { "default_value":"Explicit FTCS", "enable_events":True, "key":"-SLVS-",  "size":(4,5) }
-    stp_d = { "default_value":self._nsteps, "enable_events":True, "key":"-STEPS-",  "size":(35,20),  "resolution":10,  "orientation":"horizontal" }
+    stp_d = { "default_value":self._nsteps, "enable_events":True, "key":"-STEPS-",  "size":(35,20),  "orientation":"horizontal" }
     dif_d = { "default_value":self._kappa, "enable_events":True, "key":"-KAPPA-",  "size":(35,20), "resolution":0.01,  "orientation":"horizontal" }
     dts_d = { "size":(10,1), "enable_events": True, "key":"-DT-"}
     sig_d = { "size":(10,1), "enable_events": True, "key":"-SIG-"}
@@ -72,7 +72,7 @@ class SubModuleWindow(BaseWindow):
       [ sg.Text("", size=(1,1))                                            ],
       [ sg.Combo(samp, **smp_d), sg.Text("# of Mesh Points",   size=(15,1))  ],
       [ sg.Input(self._sigma, **sig_d), sg.Text("Gaussian Sigma",   size=(15,1))  ],
-      [ sg.Slider((10,200), **stp_d), sg.Text("# of Steps Taken",   size=(15,1))  ],
+      [ sg.Slider((1,200), **stp_d), sg.Text("# of Steps Taken",   size=(15,1))  ],
       [ sg.Slider((0.0,2.0), **dif_d), sg.Text("Diffusion Constant", size=(15,1))  ],
       [ sg.Text("", size=(1,1))                                            ],
       [ sg.Input(self._dt, **dts_d), sg.Text("Timestep", size=(15,1))      ],
@@ -114,7 +114,10 @@ class SubModuleWindow(BaseWindow):
       return True
  
     elif event in ("-STEPS-"):
-      self._nsteps = int(values["-STEPS-"])
+      try:
+        self._nsteps = int(values["-STEPS-"])
+      except:
+        self._nsteps = 1
 
     elif event in ("-KAPPA-"):
       self._kappa = float(values["-KAPPA-"])
