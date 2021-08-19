@@ -72,6 +72,7 @@ class SubModuleWindow(BaseWindow):
   def launch(self):
       super().launch()
       self._init()
+      self._fft()
       self._norm = np.inf
       self._draw()
 
@@ -96,11 +97,13 @@ class SubModuleWindow(BaseWindow):
       self._cnt+=self._nsteps
       if la.norm(self._ux-self._uj1) > 1e-4: [self._just_jacobi() for _ in range(self._nsteps)]
       if la.norm(self._ux-self._u)   > 1e-4: [self._multigrid()   for _ in range(self._nsteps)]
+      self._fft()
       self._draw()
       self.window["-NEXT-"].update(f"Steps - {self._cnt}")
 
     elif event == "-RESET-":
       self._init()
+      self._fft()
       self._draw()
       self._cnt=0
       self.window["-NEXT-"].update(f"Steps - {self._cnt}")      
@@ -110,14 +113,27 @@ class SubModuleWindow(BaseWindow):
 
     # Add any plot frills you want
     plt.close('all')
-    plt.plot(self._x,self._uj1,     label='Jacobi')
-    plt.plot(self._x,self._u,       label='Multigrid')
-    plt.plot(self._x,self._ux, ':', label='Exact')
-    plt.xlabel("x")
-    plt.ylabel("y")
-    plt.ylim(-1,8)
-    plt.title("Example Plot")
-    plt.legend()
+
+    fig, (ax1,ax2) = plt.subplots(2)
+    ax1.plot(self._x,self._uj1,     label='Jacobi')
+    ax1.plot(self._x,self._u,       label='Multigrid')
+    ax1.plot(self._x,self._ux, ':', label='Exact')
+    ax1.set_xlabel("x")
+    ax1.set_ylabel("y")
+    ax1.set_ylim(-1,8)
+
+
+    ax2.scatter(self._freq_wj, self._spec_wj, label='Jacobi', s=4.0)
+    ax2.scatter(self._freq_mg, self._spec_mg, label='Multigrid', s=4.0)
+    ax2.set_yscale("log",basey=2)
+    ax2.set_ylim((2**(-12),2**12))
+    ax2.set_xlim(left=0.0)
+    ax2.set_xlabel("frequency")
+    ax2.set_ylabel("power spectra of residuals")
+
+    # plt.title("Example Plot")
+    ax1.legend()
+    ax2.legend()
     plt.tight_layout()
     plt.savefig(self._fout.name)
     self.window["-IMAGE-"].update(filename=self._fout.name)
@@ -223,6 +239,15 @@ class SubModuleWindow(BaseWindow):
     self._norm = la.norm(self._u0-self._u)
     self._u0 = self._u.copy()
 
+  def _fft(self):
+      self._dft  = np.fft.fft(np.abs(self._ux - self._u))
+      self._spec_mg = self._dft * np.conj(self._dft)
+      self._freq_mg = np.fft.fftfreq(self._n, 1.0/(self._n))
+
+
+      self._dft  = np.fft.fft(np.abs(self._ux - self._uj1))
+      self._spec_wj = self._dft * np.conj(self._dft)
+      self._freq_wj = np.fft.fftfreq(self._n, 1.0/(self._n))
 
 if __name__ == "__main__":
 
