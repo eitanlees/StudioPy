@@ -4,6 +4,7 @@ location: "iea/acs2"
 
 module_configs:
   - "config/intro.yml"
+  - "config/opt.yml"
   - "config/pdes.yml"
   - "config/fft.yml"
 

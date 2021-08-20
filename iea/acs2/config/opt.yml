@@ -1,0 +1,10 @@
+module: "Optimization"
+
+location: "iea/acs2/opt/"
+
+submodules:
+  Unconstrained Optimization in 2D: "unconstrained_optimization.py"
+
+
+text: "The following modules illustrate the optimization\n
+algorithms"
