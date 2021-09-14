@@ -1,4 +1,4 @@
-# DSC_IEA
+# StudioPy
 Interactive Educational Applet for the Florida State University Department of Scientific Computing courses. Inspired by the interactive educational modules developed for Michael Heath's scientific computing textbook.
 
 
@@ -11,7 +11,7 @@ Suggested setup is via a fresh `conda` environment:
 
 `conda activate ENV-NAME` or `source activate ENV-NAME` if using MacOS
 
-Use `python main.py` in the parent level DSC_IEA directory.
+Use `python main.py` in the parent level StudioPy directory.
 
 
 # Development
